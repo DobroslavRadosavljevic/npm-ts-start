@@ -31,20 +31,19 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
-    "test": "vitest",
+    "test": "bun test",
     "lint": "bun ultracite check",
     "format": "bun ultracite fix",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "bun run build"
   },
   "devDependencies": {
-    "@types/node": "^25.0.3",
+    "@types/bun": "latest",
     "bumpp": "^10.3.2",
     "oxfmt": "^0.26.0",
     "oxlint": "^1.41.0",
     "tsdown": "^0.18.1",
     "typescript": "^5.9.3",
-    "ultracite": "7.0.12",
-    "vitest": "^4.0.16"
+    "ultracite": "7.0.12"
   }
 }
