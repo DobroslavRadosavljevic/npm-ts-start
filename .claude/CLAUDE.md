@@ -1,126 +1,77 @@
-# Ultracite Code Standards
+# CLAUDE.md
 
-This project uses **Ultracite**, a zero-config preset that enforces strict code quality standards through automated formatting and linting.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Quick Reference
+## Project Overview
 
-- **Format code**: `bun x ultracite fix`
-- **Check for issues**: `bun x ultracite check`
-- **Diagnose setup**: `bun x ultracite doctor`
+This is a TypeScript npm package starter template. It produces a zero-dependency ESM library with TypeScript declarations.
 
-Oxlint + Oxfmt (the underlying engine) provides robust linting and formatting. Most issues are automatically fixable.
+## Commands
 
----
+```bash
+bun run build       # Bundle with tsdown → dist/
+bun run dev         # Watch mode
+bun run test        # Run all tests
+bun test <file>     # Run single test file
+bun run lint        # Check code quality
+bun run format      # Auto-fix lint/format issues
+bun run typecheck   # TypeScript type checking
+bun run bump        # Bump version + changelog, creates git tag
+git push --tags     # Triggers automated npm publish via GitHub Actions
+```
 
-## Core Principles
+## Architecture
 
-Write code that is **accessible, performant, type-safe, and maintainable**. Focus on clarity and explicit intent over brevity.
+- `src/index.ts` - Main package entry point, exports public API
+- `tests/` - Test files using Bun's test runner (`describe`, `it`, `expect` from `bun:test`)
+- `dist/` - Build output (ESM + `.d.mts` declarations)
 
-### Type Safety & Explicitness
+Build tool is **tsdown** (Rolldown-based). Output is configured in `tsdown.config.ts`.
+
+## Code Quality
+
+Uses **Ultracite** (Oxlint + Oxfmt) for linting and formatting. Pre-commit hooks auto-format staged files.
+
+Commit messages must follow Conventional Commits format: `type(scope): description`
+
+## Code Standards
+
+Write code that is **type-safe and maintainable**. Focus on clarity over brevity.
+
+### TypeScript
 
 - Use explicit types for function parameters and return values when they enhance clarity
-- Prefer `unknown` over `any` when the type is genuinely unknown
-- Use const assertions (`as const`) for immutable values and literal types
-- Leverage TypeScript's type narrowing instead of type assertions
-- Use meaningful variable names instead of magic numbers - extract constants with descriptive names
+- Prefer `unknown` over `any`
+- Use const assertions (`as const`) for immutable values
+- Leverage type narrowing instead of type assertions
+- Use `const` by default, `let` only when needed, never `var`
 
-### Modern JavaScript/TypeScript
+### Modern JavaScript
 
-- Use arrow functions for callbacks and short functions
-- Prefer `for...of` loops over `.forEach()` and indexed `for` loops
-- Use optional chaining (`?.`) and nullish coalescing (`??`) for safer property access
-- Prefer template literals over string concatenation
-- Use destructuring for object and array assignments
-- Use `const` by default, `let` only when reassignment is needed, never `var`
+- Arrow functions for callbacks
+- `for...of` over `.forEach()` and indexed loops
+- Optional chaining (`?.`) and nullish coalescing (`??`)
+- Template literals over string concatenation
+- Destructuring for object/array assignments
 
-### Async & Promises
+### Async
 
-- Always `await` promises in async functions - don't forget to use the return value
-- Use `async/await` syntax instead of promise chains for better readability
-- Handle errors appropriately in async code with try-catch blocks
-- Don't use async functions as Promise executors
+- Always `await` promises in async functions
+- Use `async/await` over promise chains
+- Handle errors with try-catch
 
-### React & JSX
+### Error Handling
 
-- Use function components over class components
-- Call hooks at the top level only, never conditionally
-- Specify all dependencies in hook dependency arrays correctly
-- Use the `key` prop for elements in iterables (prefer unique IDs over array indices)
-- Nest children between opening and closing tags instead of passing as props
-- Don't define components inside other components
-- Use semantic HTML and ARIA attributes for accessibility:
-  - Provide meaningful alt text for images
-  - Use proper heading hierarchy
-  - Add labels for form inputs
-  - Include keyboard event handlers alongside mouse events
-  - Use semantic elements (`<button>`, `<nav>`, etc.) instead of divs with roles
+- No `console.log`, `debugger`, or `alert` in production code
+- Throw `Error` objects with descriptive messages
+- Prefer early returns over nested conditionals
 
-### Error Handling & Debugging
-
-- Remove `console.log`, `debugger`, and `alert` statements from production code
-- Throw `Error` objects with descriptive messages, not strings or other values
-- Use `try-catch` blocks meaningfully - don't catch errors just to rethrow them
-- Prefer early returns over nested conditionals for error cases
-
-### Code Organization
-
-- Keep functions focused and under reasonable cognitive complexity limits
-- Extract complex conditions into well-named boolean variables
-- Use early returns to reduce nesting
-- Prefer simple conditionals over nested ternary operators
-- Group related code together and separate concerns
-
-### Security
-
-- Add `rel="noopener"` when using `target="_blank"` on links
-- Avoid `dangerouslySetInnerHTML` unless absolutely necessary
-- Don't use `eval()` or assign directly to `document.cookie`
-- Validate and sanitize user input
-
-### Performance
-
-- Avoid spread syntax in accumulators within loops
-- Use top-level regex literals instead of creating them in loops
-- Prefer specific imports over namespace imports
-- Avoid barrel files (index files that re-export everything)
-- Use proper image components (e.g., Next.js `<Image>`) over `<img>` tags
-
-### Framework-Specific Guidance
-
-**Next.js:**
-
-- Use Next.js `<Image>` component for images
-- Use `next/head` or App Router metadata API for head elements
-- Use Server Components for async data fetching instead of async Client Components
-
-**React 19+:**
-
-- Use ref as a prop instead of `React.forwardRef`
-
-**Solid/Svelte/Vue/Qwik:**
-
-- Use `class` and `for` attributes (not `className` or `htmlFor`)
-
----
-
-## Testing
+### Testing
 
 - Write assertions inside `it()` or `test()` blocks
-- Avoid done callbacks in async tests - use async/await instead
-- Don't use `.only` or `.skip` in committed code
-- Keep test suites reasonably flat - avoid excessive `describe` nesting
+- Use async/await, not done callbacks
+- No `.only` or `.skip` in committed code
 
-## When Oxlint + Oxfmt Can't Help
+## Auto-formatting
 
-Oxlint + Oxfmt's linter will catch most issues automatically. Focus your attention on:
-
-1. **Business logic correctness** - Oxlint + Oxfmt can't validate your algorithms
-2. **Meaningful naming** - Use descriptive names for functions, variables, and types
-3. **Architecture decisions** - Component structure, data flow, and API design
-4. **Edge cases** - Handle boundary conditions and error states
-5. **User experience** - Accessibility, performance, and usability considerations
-6. **Documentation** - Add comments for complex logic, but prefer self-documenting code
-
----
-
-Most formatting and common issues are automatically fixed by Oxlint + Oxfmt. Run `bun x ultracite fix` before committing to ensure compliance.
+Most issues are auto-fixed by running `bun run format`. The pre-commit hook handles this for staged files.
