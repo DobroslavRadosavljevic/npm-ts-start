@@ -75,3 +75,16 @@ Write code that is **type-safe and maintainable**. Focus on clarity over brevity
 ## Auto-formatting
 
 Most issues are auto-fixed by running `bun run format`. The pre-commit hook handles this for staged files.
+
+## Source Code Reference
+
+Source code for dependencies is available in `opensrc/` for deeper understanding of implementation details. See `opensrc/sources.json` for available packages.
+
+To fetch source code for a package you need to understand:
+
+```bash
+npx opensrc <package>           # npm package (e.g., npx opensrc zod)
+npx opensrc pypi:<package>      # Python package
+npx opensrc crates:<package>    # Rust crate
+npx opensrc <owner>/<repo>      # GitHub repo (e.g., npx opensrc vercel/ai)
+```
