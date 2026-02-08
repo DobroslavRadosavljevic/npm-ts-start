@@ -5,5 +5,7 @@ dist
 
 .mcp.json
 
+.claude/
+
 # opensrc - source code for packages
 opensrc/
