@@ -1,6 +1,6 @@
 import { defineConfig } from "tsdown";
 
 export default defineConfig({
-  exports: true,
-  // ...config options
+  // Keep package contract explicit in package.json instead of auto-mutating it.
+  exports: false,
 });

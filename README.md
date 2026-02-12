@@ -8,7 +8,8 @@ A minimal starter template for creating npm packages in pure TypeScript.
 - ⚡ **tsdown** - Fast bundling powered by Rolldown
 - 🧪 **Bun Test** - Fast built-in test runner
 - 🎨 **Ultracite** - Zero-config linting and formatting with Oxlint + Oxfmt
-- 📦 **ESM** - Ships as ES modules with TypeScript declarations
+- 📦 **ESM-only** - Ships as ES modules with TypeScript declarations
+- 🟢 **Node 20+** - Explicit runtime baseline for consumers
 - 🚀 **GitHub Actions** - CI/CD pipeline with automated testing and npm publishing
 - 🐶 **Husky** - Pre-commit hooks for code quality enforcement
 - 📝 **Commitlint** - Conventional commit message validation
@@ -32,17 +33,38 @@ bun install
 
 4. Start developing in `src/index.ts`.
 
+## 🧩 Runtime & Module Support
+
+- This template publishes an **ESM-only** package.
+- Supported runtime: **Node.js 20 or newer**.
+- CommonJS `require()` is intentionally not supported.
+
+### CJS to ESM Migration Note
+
+If you are in a CommonJS codebase, use dynamic import:
+
+```js
+// CommonJS file
+(async () => {
+  const { fn } = await import("npm-ts-start");
+  console.log(fn());
+})();
+```
+
 ## 📜 Scripts
 
-| Command             | Description                         |
-| ------------------- | ----------------------------------- |
-| `bun run build`     | Build the package                   |
-| `bun run dev`       | Build in watch mode                 |
-| `bun run test`      | Run tests                           |
-| `bun run lint`      | Check for linting issues            |
-| `bun run format`    | Fix linting and formatting issues   |
-| `bun run typecheck` | Run TypeScript type checking        |
-| `bun run bump`      | Bump version and generate changelog |
+| Command                 | Description                                    |
+| ----------------------- | ---------------------------------------------- |
+| `bun run build`         | Build the package                              |
+| `bun run dev`           | Build in watch mode                            |
+| `bun run test`          | Run tests                                      |
+| `bun run lint`          | Check for linting issues                       |
+| `bun run format`        | Fix linting and formatting issues              |
+| `bun run typecheck`     | Run TypeScript type checking                   |
+| `bun run check:package` | Validate package exports/types metadata        |
+| `bun run test:consumer` | Smoke-test packed artifact from a consumer app |
+| `bun run check:all`     | Run full release quality gate                  |
+| `bun run bump`          | Bump version and generate changelog            |
 
 ## 📁 Project Structure
 
@@ -54,14 +76,19 @@ bun install
 ├── dist/                 # Build output (generated)
 ├── .github/
 │   └── workflows/
-│       ├── ci.yml        # CI pipeline (lint, test, build)
-│       └── release.yml   # Automated npm publishing
+│       ├── ci.yml             # Full quality gate in CI
+│       ├── release.yml        # Automated npm publishing
+│       └── security-audit.yml # Scheduled dependency/security checks
+├── scripts/
+│   └── consumer-smoke.mjs # Packed artifact consumer smoke test
 ├── .husky/
 │   ├── pre-commit        # Runs lint-staged before commits
 │   └── commit-msg        # Validates commit messages
 ├── tsdown.config.ts      # Build configuration
 ├── tsconfig.json         # TypeScript configuration
+├── tsconfig.typecheck.json # Typecheck config for src + tests
 ├── commitlint.config.ts  # Commit message rules
+├── .github/dependabot.yml # Automated dependency update PRs
 └── package.json
 ```
 
@@ -91,9 +118,11 @@ chore: update dependencies
 On every push to `main` and pull request, the CI workflow runs:
 
 - ✅ Lint check
-- ✅ Type check
+- ✅ Type check (including tests)
 - ✅ Tests
 - ✅ Build
+- ✅ Package contract checks (`publint` + `@arethetypeswrong/cli`)
+- ✅ Consumer smoke test from packed tarball
 
 ### Automated Releases
 
