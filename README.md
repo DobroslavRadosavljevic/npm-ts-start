@@ -1,6 +1,8 @@
 # 📦 npm-ts-start
 
-A minimal starter template for creating npm packages in pure TypeScript.
+[![npm version](https://img.shields.io/npm/v/npm-ts-start.svg)](https://www.npmjs.com/package/npm-ts-start) [![CI](https://github.com/DobroslavRadosavljevic/npm-ts-start/actions/workflows/ci.yml/badge.svg)](https://github.com/DobroslavRadosavljevic/npm-ts-start/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Node 20+](https://img.shields.io/badge/node-%3E%3D20-brightgreen.svg)](https://nodejs.org)
+
+A minimal starter template for creating npm packages in pure TypeScript. ESM-only, Node 20+, TypeScript.
 
 ## ✨ Features
 
@@ -13,13 +15,21 @@ A minimal starter template for creating npm packages in pure TypeScript.
 - 🚀 **GitHub Actions** - CI/CD pipeline with automated testing and npm publishing
 - 🐶 **Husky** - Pre-commit hooks for code quality enforcement
 - 📝 **Commitlint** - Conventional commit message validation
+- 🤖 **Dependabot** - Weekly dependency and GitHub Actions update PRs
+- 📈 **bumpp** - Version bumping with changelog generation
+- 📋 **lint-staged** - Format and lint only staged files on pre-commit
+
+## 📋 Prerequisites
+
+- **Bun** 1.3.9+ (package manager + test runner)
+- **Node.js** 20+ (runtime for consumers; CI uses Node 20)
 
 ## 🚀 Getting Started
 
-1. Clone or use this template:
+1. **Use this template** on GitHub, or clone:
 
 ```bash
-git clone https://github.com/dobroslavradosavljevic/npm-ts-start.git my-package
+git clone https://github.com/DobroslavRadosavljevic/npm-ts-start.git my-package
 cd my-package
 ```
 
@@ -44,7 +54,7 @@ Contributions are welcome, including first-time open-source contributions.
 ```bash
 git clone https://github.com/<your-username>/npm-ts-start.git
 cd npm-ts-start
-git remote add upstream https://github.com/dobroslavradosavljevic/npm-ts-start.git
+git remote add upstream https://github.com/DobroslavRadosavljevic/npm-ts-start.git
 ```
 
 3. Sync with upstream `main` before creating your branch:
@@ -129,25 +139,31 @@ If you are in a CommonJS codebase, use dynamic import:
 
 ```txt
 ├── src/
-│   └── index.ts          # Package entry point
+│   └── index.ts             # Package entry point
 ├── tests/
-│   └── index.test.ts     # Test files
-├── dist/                 # Build output (generated)
+│   └── index.test.ts        # Test files
+├── dist/                    # Build output (generated; .mjs + .d.mts)
 ├── .github/
-│   └── workflows/
-│       ├── ci.yml             # Full quality gate in CI
-│       ├── release.yml        # Automated npm publishing
-│       └── security-audit.yml # Scheduled dependency/security checks
+│   ├── workflows/
+│   │   ├── ci.yml           # Full quality gate in CI
+│   │   ├── release.yml      # Automated npm publishing
+│   │   └── security-audit.yml # Weekly dependency/security checks
+│   ├── dependabot.yml       # Automated dependency update PRs
+│   └── ISSUE_TEMPLATE/      # Bug report & feature request templates
 ├── scripts/
-│   └── consumer-smoke.mjs # Packed artifact consumer smoke test
+│   └── consumer-smoke.mjs   # Packed artifact consumer smoke test
 ├── .husky/
-│   ├── pre-commit        # Runs lint-staged before commits
-│   └── commit-msg        # Validates commit messages
-├── tsdown.config.ts      # Build configuration
-├── tsconfig.json         # TypeScript configuration
-├── tsconfig.typecheck.json # Typecheck config for src + tests
-├── commitlint.config.ts  # Commit message rules
-├── .github/dependabot.yml # Automated dependency update PRs
+│   ├── pre-commit           # Runs lint-staged before commits
+│   └── commit-msg           # Validates commit messages
+├── .vscode/
+│   └── settings.json        # Editor settings
+├── tsdown.config.ts         # Build configuration
+├── tsconfig.json            # TypeScript configuration
+├── tsconfig.typecheck.json  # Typecheck config for src + tests
+├── commitlint.config.ts     # Commit message rules
+├── .oxfmtrc.jsonc          # Ultracite (Oxfmt) config
+├── .oxlintrc.json          # Ultracite (Oxlint) config
+├── bunfig.toml             # Bun configuration
 └── package.json
 ```
 
@@ -182,6 +198,13 @@ On every push to `main` and pull request, the CI workflow runs:
 - ✅ Build
 - ✅ Package contract checks (`publint` + `@arethetypeswrong/cli`)
 - ✅ Consumer smoke test from packed tarball
+
+### Security Audit
+
+Scheduled weekly (Mondays 7:00 UTC) and available via manual dispatch:
+
+- 🔒 Runs `bun audit --production`
+- 📊 Appends `bun outdated` to workflow summary
 
 ### Automated Releases
 
