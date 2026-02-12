@@ -33,6 +33,65 @@ bun install
 
 4. Start developing in `src/index.ts`.
 
+## 🤝 Contributing (External Contributors)
+
+Contributions are welcome, including first-time open-source contributions.
+
+1. Check open issues and existing PRs before starting. For larger changes, open
+   an issue first so we can align on scope.
+2. Fork the repository and clone your fork:
+
+```bash
+git clone https://github.com/<your-username>/npm-ts-start.git
+cd npm-ts-start
+git remote add upstream https://github.com/dobroslavradosavljevic/npm-ts-start.git
+```
+
+3. Sync with upstream `main` before creating your branch:
+
+```bash
+git fetch upstream
+git checkout main
+git rebase upstream/main
+```
+
+4. Create a focused branch:
+
+```bash
+git checkout -b feat/short-description
+```
+
+5. Install dependencies and Git hooks:
+
+```bash
+bun install
+```
+
+6. Make your changes with tests where relevant.
+7. Run the full quality gate before pushing:
+
+```bash
+bun run check:all
+```
+
+8. Use Conventional Commit messages:
+
+```txt
+feat: add new feature
+fix: resolve parser bug
+docs: clarify setup steps
+chore: update dependencies
+```
+
+9. Push your branch and open a pull request against `main`.
+10. Follow the PR template and include:
+
+- What changed and why
+- Linked issue (if applicable)
+- Notes for reviewers (tradeoffs, follow-ups, or risks)
+
+For more details, see `CONTRIBUTING.md`.
+
 ## 🧩 Runtime & Module Support
 
 - This template publishes an **ESM-only** package.
