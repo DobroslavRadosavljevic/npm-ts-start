@@ -1,39 +1,43 @@
 # 📦 npm-ts-start
 
-[![npm version](https://img.shields.io/npm/v/npm-ts-start.svg)](https://www.npmjs.com/package/npm-ts-start) [![CI](https://github.com/DobroslavRadosavljevic/npm-ts-start/actions/workflows/ci.yml/badge.svg)](https://github.com/DobroslavRadosavljevic/npm-ts-start/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Node 20+](https://img.shields.io/badge/node-%3E%3D20-brightgreen.svg)](https://nodejs.org)
+[![npm version](https://img.shields.io/npm/v/npm-ts-start.svg)](https://www.npmjs.com/package/npm-ts-start)
+[![CI](https://github.com/your-org/your-package/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/your-package/actions/workflows/ci.yml)
+[![Release](https://github.com/your-org/your-package/actions/workflows/release.yml/badge.svg)](https://github.com/your-org/your-package/actions/workflows/release.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node 20+](https://img.shields.io/badge/node-%3E%3D20-brightgreen.svg)](https://nodejs.org)
 
-A minimal starter template for creating npm packages in pure TypeScript. ESM-only, Node 20+, TypeScript.
+Production-grade starter for TypeScript npm packages.
 
-## ✨ Features
+- ESM-only package contract
+- Bun-first development workflow
+- Changesets release automation
+- npm trusted publishing with provenance
+- CI compatibility checks for Node 20/22/24
 
-- 🔷 **TypeScript** - Write type-safe code with full TypeScript support
-- ⚡ **tsdown** - Fast bundling powered by Rolldown
-- 🧪 **Bun Test** - Fast built-in test runner
-- 🎨 **Ultracite** - Zero-config linting and formatting with Oxlint + Oxfmt
-- 📦 **ESM-only** - Ships as ES modules with TypeScript declarations
-- 🟢 **Node 20+** - Explicit runtime baseline for consumers
-- 🚀 **GitHub Actions** - CI/CD pipeline with automated testing and npm publishing
-- 🐶 **Husky** - Pre-commit hooks for code quality enforcement
-- 📝 **Commitlint** - Conventional commit message validation
-- 🤖 **Dependabot** - Weekly dependency and GitHub Actions update PRs
-- 📈 **bumpp** - Version bumping with changelog generation
-- 📋 **lint-staged** - Format and lint only staged files on pre-commit
+Replace `your-org/your-package` badge links after creating your own repository.
 
-## 📋 Prerequisites
+## Docs You Should Read
 
-- **Bun** 1.3.9+ (package manager + test runner)
-- **Node.js** 20+ (runtime for consumers; CI uses Node 20)
+- `GETTING_STARTED.md` - template -> first publish, step-by-step
+- `CONTRIBUTING.md` - contributor workflow
+- `MAINTAINERS.md` - owner/maintainer runbook
+- `.changeset/README.md` - changeset conventions
 
-## 🚀 Getting Started
+## Prerequisites
 
-1. **Use this template** on GitHub, or clone:
+- Bun `1.3.9+`
+- Node.js `20+` for runtime compatibility
+- Node.js `22+` in release CI for npm trusted publishing requirements
+
+## Quick Start
+
+1. Use this repository as a GitHub template.
+2. Clone your new repository:
 
 ```bash
-git clone https://github.com/DobroslavRadosavljevic/npm-ts-start.git my-package
-cd my-package
+git clone https://github.com/<your-user-or-org>/<your-repo>.git
+cd <your-repo>
 ```
-
-2. Update `package.json` with your package name, description, and author info.
 
 3. Install dependencies:
 
@@ -41,213 +45,169 @@ cd my-package
 bun install
 ```
 
-4. Start developing in `src/index.ts`.
+4. Update `package.json` metadata:
+   - `name`
+   - `description`
+   - `author`
+   - `homepage`
+   - `bugs.url`
+   - `repository.url`
 
-## 🤝 Contributing (External Contributors)
-
-Contributions are welcome, including first-time open-source contributions.
-
-1. Check open issues and existing PRs before starting. For larger changes, open
-   an issue first so we can align on scope.
-2. Fork the repository and clone your fork:
-
-```bash
-git clone https://github.com/<your-username>/npm-ts-start.git
-cd npm-ts-start
-git remote add upstream https://github.com/DobroslavRadosavljevic/npm-ts-start.git
-```
-
-3. Sync with upstream `main` before creating your branch:
-
-```bash
-git fetch upstream
-git checkout main
-git rebase upstream/main
-```
-
-4. Create a focused branch:
-
-```bash
-git checkout -b feat/short-description
-```
-
-5. Install dependencies and Git hooks:
-
-```bash
-bun install
-```
-
-6. Make your changes with tests where relevant.
-7. Run the full quality gate before pushing:
+5. Run the full gate:
 
 ```bash
 bun run check:all
 ```
 
-8. Use Conventional Commit messages:
+6. Start building in `src/index.ts`.
 
-```txt
-feat: add new feature
-fix: resolve parser bug
-docs: clarify setup steps
-chore: update dependencies
-```
+For the full beginner flow, follow `GETTING_STARTED.md`.
 
-9. Push your branch and open a pull request against `main`.
-10. Follow the PR template and include:
+## Runtime Contract
 
-- What changed and why
-- Linked issue (if applicable)
-- Notes for reviewers (tradeoffs, follow-ups, or risks)
+- Published package is **ESM-only**.
+- Runtime floor is **Node 20+**.
+- CommonJS `require()` is intentionally unsupported.
 
-For more details, see `CONTRIBUTING.md`.
-
-## 🧩 Runtime & Module Support
-
-- This template publishes an **ESM-only** package.
-- Supported runtime: **Node.js 20 or newer**.
-- CommonJS `require()` is intentionally not supported.
-
-### CJS to ESM Migration Note
-
-If you are in a CommonJS codebase, use dynamic import:
+CommonJS consumers must use dynamic import:
 
 ```js
-// CommonJS file
 (async () => {
-  const { fn } = await import("npm-ts-start");
+  const { fn } = await import("your-package-name");
   console.log(fn());
 })();
 ```
 
-## 📜 Scripts
+## Scripts
 
-| Command                 | Description                                    |
-| ----------------------- | ---------------------------------------------- |
-| `bun run build`         | Build the package                              |
-| `bun run dev`           | Build in watch mode                            |
-| `bun run test`          | Run tests                                      |
-| `bun run lint`          | Check for linting issues                       |
-| `bun run format`        | Fix linting and formatting issues              |
-| `bun run typecheck`     | Run TypeScript type checking                   |
-| `bun run check:package` | Validate package exports/types metadata        |
-| `bun run test:consumer` | Smoke-test packed artifact from a consumer app |
-| `bun run check:all`     | Run full release quality gate                  |
-| `bun run bump`          | Bump version and generate changelog            |
+| Command                    | Description                                                  |
+| -------------------------- | ------------------------------------------------------------ |
+| `bun run dev`              | Build in watch mode                                          |
+| `bun run build`            | Build package to `dist/`                                     |
+| `bun run test`             | Run Bun tests                                                |
+| `bun run lint`             | Run Ultracite checks                                         |
+| `bun run format`           | Apply Ultracite fixes                                        |
+| `bun run typecheck`        | Run TypeScript checks (no emit)                              |
+| `bun run check:pack`       | Validate packed publish contents (`npm pack --dry-run`)      |
+| `bun run check:package`    | Run `publint` and `@arethetypeswrong/cli`                    |
+| `bun run test:consumer`    | Smoke-test packed artifact in a temp consumer app            |
+| `bun run check:all`        | Full quality gate                                            |
+| `bun run changeset`        | Create a changeset for releasable changes                    |
+| `bun run release:status`   | Show pending release plan from changesets                    |
+| `bun run version-packages` | Apply version/changelog updates from changesets              |
+| `bun run release`          | Direct publish via Changesets                                |
+| `bun run release:ci`       | Guarded publish path used by CI (`NPM_PUBLISH_ENABLED=true`) |
 
-## 📁 Project Structure
+## Branch + PR Workflow
+
+1. Sync `main`:
+
+```bash
+git checkout main
+git pull --rebase origin main
+```
+
+2. Create a branch:
+
+```bash
+git checkout -b feat/<short-name>
+```
+
+3. Make changes.
+4. If package behavior/API/metadata changed, run:
+
+```bash
+bun run changeset
+```
+
+5. Run checks:
+
+```bash
+bun run check:all
+```
+
+6. Commit and push branch.
+7. Open PR to `main`.
+
+CI enforces changesets for package-impacting paths.
+
+## Release Flow (What Happens on Merge)
+
+1. PR with changeset merges to `main`.
+2. `release.yml` runs `changesets/action`.
+3. Changesets creates/updates a release PR.
+4. You merge the release PR.
+5. Publish runs only if `NPM_PUBLISH_ENABLED=true`.
+
+## Trusted Publishing Setup (npm Website)
+
+1. Sign in at [npmjs.com](https://www.npmjs.com).
+2. Open your package settings.
+3. Go to **Publishing access**.
+4. Click **Add trusted publisher**.
+5. Select **GitHub Actions**.
+6. Configure:
+   - Repository owner
+   - Repository name
+   - Workflow file: `release.yml`
+
+Then configure GitHub repository variable:
+
+- Name: `NPM_PUBLISH_ENABLED`
+- Value: `true` to allow publishing
+
+Keep it unset or `false` to safely block accidental publishes.
+
+## CI/CD Summary
+
+### `ci.yml`
+
+- `quality` job: full `check:all` on Node 20
+- `compat` matrix: test/build/package checks on Node 20/22/24
+- `changeset-required`: PR guard for release intent
+
+### `release.yml`
+
+- Triggered on push to `main` and manual dispatch
+- Runs quality checks before release action
+- Uses trusted publishing + provenance
+- Publish guarded by `NPM_PUBLISH_ENABLED`
+
+### `security-audit.yml`
+
+- Weekly `bun audit --production`
+- Includes dependency drift summary (`bun outdated`)
+
+## Project Structure
 
 ```txt
 ├── src/
-│   └── index.ts             # Package entry point
+│   └── index.ts
 ├── tests/
-│   └── index.test.ts        # Test files
-├── dist/                    # Build output (generated; .mjs + .d.mts)
+│   └── index.test.ts
+├── scripts/
+│   └── consumer-smoke.ts
+├── dist/                           # generated
+├── .changeset/
+│   ├── config.json
+│   └── README.md
 ├── .github/
 │   ├── workflows/
-│   │   ├── ci.yml           # Full quality gate in CI
-│   │   ├── release.yml      # Automated npm publishing
-│   │   └── security-audit.yml # Weekly dependency/security checks
-│   ├── dependabot.yml       # Automated dependency update PRs
-│   └── ISSUE_TEMPLATE/      # Bug report & feature request templates
-├── scripts/
-│   └── consumer-smoke.mjs   # Packed artifact consumer smoke test
-├── .husky/
-│   ├── pre-commit           # Runs lint-staged before commits
-│   └── commit-msg           # Validates commit messages
-├── .vscode/
-│   └── settings.json        # Editor settings
-├── tsdown.config.ts         # Build configuration
-├── tsconfig.json            # TypeScript configuration
-├── tsconfig.typecheck.json  # Typecheck config for src + tests
-├── commitlint.config.ts     # Commit message rules
-├── .oxfmtrc.jsonc          # Ultracite (Oxfmt) config
-├── .oxlintrc.json          # Ultracite (Oxlint) config
-├── bunfig.toml             # Bun configuration
+│   │   ├── ci.yml
+│   │   ├── release.yml
+│   │   └── security-audit.yml
+│   └── ISSUE_TEMPLATE/
+├── GETTING_STARTED.md
+├── MAINTAINERS.md
+├── CONTRIBUTING.md
+├── CHANGELOG.md
+├── SECURITY.md
+├── tsconfig.json
+├── tsconfig.typecheck.json
+├── tsdown.config.ts
 └── package.json
 ```
 
-## 🐶 Git Hooks
-
-This template uses Husky for Git hooks:
-
-- **pre-commit**: Runs `lint-staged` to lint and format staged files
-- **commit-msg**: Validates commit messages follow [Conventional Commits](https://www.conventionalcommits.org/)
-
-### Commit Message Format
-
-```
-type(scope): description
-
-# Examples:
-feat: add new feature
-fix: resolve bug in parser
-docs: update README
-chore: update dependencies
-```
-
-## 🔄 CI/CD
-
-### Continuous Integration
-
-On every push to `main` and pull request, the CI workflow runs:
-
-- ✅ Lint check
-- ✅ Type check (including tests)
-- ✅ Tests
-- ✅ Build
-- ✅ Package contract checks (`publint` + `@arethetypeswrong/cli`)
-- ✅ Consumer smoke test from packed tarball
-
-### Security Audit
-
-Scheduled weekly (Mondays 7:00 UTC) and available via manual dispatch:
-
-- 🔒 Runs `bun audit --production`
-- 📊 Appends `bun outdated` to workflow summary
-
-### Automated Releases
-
-When you push a version tag (`v*`), the release workflow:
-
-1. Runs all CI checks
-2. Publishes to npm with provenance
-3. Creates a GitHub release with auto-generated notes
-
-### Setup for Publishing (Trusted Publishing)
-
-This template uses [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers/) with OIDC - no tokens required.
-
-1. Go to [npmjs.com](https://www.npmjs.com) and navigate to your package settings
-2. Under **Publishing access**, click **Add trusted publisher**
-3. Configure GitHub Actions as the trusted publisher:
-   - **Repository owner**: your GitHub username or org
-   - **Repository name**: your repo name
-   - **Workflow file**: `release.yml`
-   - **Environment** (optional): leave blank
-
-That's it - no secrets or tokens to manage. The workflow uses short-lived OIDC credentials that are automatically generated for each run.
-
-## 🚢 Publishing
-
-1. Bump the version (creates a tag):
-
-```bash
-bun run bump
-```
-
-2. Push the tag to trigger the release workflow:
-
-```bash
-git push --tags
-```
-
-Or publish manually:
-
-```bash
-bun publish
-```
-
-## 📄 License
+## License
 
 MIT
