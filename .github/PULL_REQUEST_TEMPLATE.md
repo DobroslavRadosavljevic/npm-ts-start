@@ -10,6 +10,5 @@ What does this PR do?
 
 ## Checklist
 
-- [ ] Tests pass (`bun test`)
-- [ ] Linting passes (`bun run lint`)
-- [ ] Types check (`bun run typecheck`)
+- [ ] Full quality gate passes (`bun run check:all`)
+- [ ] Added a `.changeset/*.md` entry for package-impacting changes

@@ -167,6 +167,12 @@ Then set GitHub repository variable:
 - `NPM_PUBLISH_ENABLED=true` to allow real publishing
 - leave unset/false to block publishing safely
 
+Also confirm GitHub Actions has PR creation permissions:
+
+- **Settings -> Actions -> General -> Workflow permissions** ->
+  **Read and write permissions**
+- Enable **Allow GitHub Actions to create and approve pull requests**
+
 ## 🔄 CI/CD Overview
 
 ### `ci.yml`

@@ -40,6 +40,9 @@ For a beginner-first walkthrough, see `GETTING_STARTED.md`.
    - require passing CI checks
    - require PR reviews as needed by your team
 6. Confirm repository Actions are enabled.
+7. Ensure workflow token can open release PRs:
+   - Settings -> Actions -> General -> Workflow permissions -> Read and write permissions
+   - Enable "Allow GitHub Actions to create and approve pull requests"
 
 ## Daily Development and Release Model
 
@@ -151,6 +154,9 @@ npm deprecate <package-name>@<bad-version> "Deprecated: use <good-version>"
 - Check that merged PRs contain `.changeset/*.md`.
 - Check `release.yml` run logs.
 - Confirm Actions permissions and branch protections.
+- Ensure repo settings allow PR creation by Actions:
+  - Settings -> Actions -> General -> Workflow permissions -> Read and write permissions
+  - Enable "Allow GitHub Actions to create and approve pull requests"
 
 ### Publish failed with auth/provenance errors
 

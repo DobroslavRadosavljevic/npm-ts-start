@@ -55,6 +55,10 @@ Notes:
 
 - The release workflow already has the required GitHub permission
   (`id-token: write`) configured.
+- In GitHub repo settings, also enable release PR permissions:
+  - **Settings -> Actions -> General -> Workflow permissions** ->
+    **Read and write permissions**
+  - Enable **Allow GitHub Actions to create and approve pull requests**
 - No long-lived npm token is needed when trusted publishing is set up correctly.
 
 ## 4. Enable or Keep Publish Disabled (Safety Switch)
@@ -136,7 +140,13 @@ Your PR touched package-impacting files and needs `bun run changeset`.
 
 ### Release PR not created
 
-No releasable changeset has landed on `main` yet.
+Check both:
+
+1. A releasable changeset has landed on `main`.
+2. GitHub repo settings allow Actions to open PRs:
+   - **Settings -> Actions -> General -> Workflow permissions** ->
+     **Read and write permissions**
+   - **Allow GitHub Actions to create and approve pull requests**
 
 ### Publish failed with auth/provenance error
 
