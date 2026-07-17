@@ -1,21 +1,30 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "lib": ["es2023"],
-    "moduleDetection": "force",
+    /* Base (bundler handles emit; tsc is typecheck-only) */
+    "target": "ES2022",
+    "lib": ["ES2023"],
     "module": "preserve",
     "moduleResolution": "bundler",
+    "moduleDetection": "force",
     "resolveJsonModule": true,
     "types": ["bun"],
+    "noEmit": true,
+
+    /* Strictness */
     "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
-    "declaration": true,
-    "emitDeclarationOnly": true,
+    "noUnusedParameters": true,
+
+    /* Interop / syntax */
     "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
     "skipLibCheck": true
   },
-  "include": ["src"],
-  "exclude": ["opensrc"]
+  "include": ["src", "tests", "*.config.ts"],
+  "exclude": ["dist", "node_modules", "opensrc"]
 }

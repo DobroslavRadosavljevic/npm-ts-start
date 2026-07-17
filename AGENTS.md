@@ -1,127 +1,132 @@
 # Repository Guidelines for Agents
 
-This file is the agent-facing source of truth for working in this codebase.
-Use it to understand architecture, release mechanics, and safe change patterns.
+Agent-facing source of truth for this codebase. Prefer this file over assumptions from older templates.
 
-## 1) Project Purpose
+## 1) What this project is
 
-`npm-ts-start` is a starter template for building publishable TypeScript npm
-packages with:
+`npm-ts-start` is a starter for a **publishable TypeScript npm package** with:
 
-- ESM-only output
-- Bun-first local workflow
-- Changesets-managed versioning/changelog
-- GitHub Actions CI + trusted publishing
+- ESM-only output (no CJS)
+- Bun-first local tooling
+- Vitest for tests
+- tsdown for build + package validation
+- Ultracite (`oxlint` + `oxfmt`) for lint/format
+- GitHub Actions CI for quality checks only
+- Manual local npm publish (browser login + 2FA)
 
-## 2) Source of Truth Files
+## 2) Read these first
 
-Read these first before making meaningful changes:
+| File | Role |
+| --- | --- |
+| `package.json` | Scripts, exports contract, engines, metadata |
+| `src/index.ts` | Public API entry |
+| `tsdown.config.ts` | Build, dts, publint, attw, unused |
+| `tsconfig.json` | Typecheck-only (`noEmit`) |
+| `vitest.config.ts` | Node test runner config |
+| `oxlint.config.ts` / `oxfmt.config.ts` | Lint + format policy |
+| `.github/workflows/ci.yml` | Quality CI |
+| `.vscode/settings.json` | Oxc format/fix on save |
+| `README.md` | Human-facing usage |
 
-- `package.json` - scripts, publish contract, metadata
-- `src/index.ts` - public package entrypoint
-- `.github/workflows/ci.yml` - quality checks and PR gates
-- `.github/workflows/release.yml` - release PR + publish automation
-- `.changeset/config.json` - versioning rules
-- `README.md` + `GETTING_STARTED.md` + `MAINTAINERS.md` - user/owner docs
+## 3) Package contract (do not break)
 
-## 3) Module + Publish Contract (Important)
-
-The package is intentionally ESM-only.
+ESM-only by design:
 
 - `"type": "module"`
-- `exports["."].import` -> `./dist/index.mjs`
-- `exports["."].types` -> `./dist/index.d.mts`
-- `exports["."].require` -> `null`
-- Node runtime floor: `>=20`
+- `exports["."].import` → `./dist/index.mjs`
+- `exports["."].types` → `./dist/index.d.mts`
+- `exports["."].require` → `null`
+- Published files: `dist/` only
+- Consumer runtime: Node `>=20`
+- Build tooling (tsdown): Node `^22.18 || >=24.11`
 
-Do not switch to dual CJS/ESM unless explicitly requested.
+Do **not** add dual CJS/ESM, enable tsdown `exports: true` (would overwrite hand-authored `require: null`), or publish from CI unless explicitly asked.
 
-## 4) Build/Test/Check Commands
+## 4) Commands
 
-Use Bun for all local workflows.
+Use Bun for local workflows:
 
-- `bun install`
-- `bun run dev`
-- `bun run build`
-- `bun run test`
-- `bun run lint`
-- `bun run format`
-- `bun run typecheck`
-- `bun run check:pack`
-- `bun run check:package`
-- `bun run test:consumer`
-- `bun run check:all`
+```bash
+bun install
+bun run dev          # tsdown --watch
+bun run build        # build + publint + attw + unused
+bun run test         # vitest run
+bun run test:watch
+bun run lint         # ultracite check
+bun run format       # ultracite fix
+bun run typecheck    # tsc --noEmit
+bun run check:pack   # npm pack --dry-run
+bun run check:all    # lint + typecheck + test + build + pack
+```
 
-Default validation target for changes is `bun run check:all`.
+Default validation target: **`bun run check:all`**.
 
-## 5) Release and Versioning Model
+Release (local only):
 
-This repo uses Changesets.
+```bash
+bun run login        # npm login --auth-type=web
+bun run whoami
+bun run release:dry
+bun run release      # npm publish --access public (runs prepublishOnly → check:all)
+```
 
-- Contributors add `.changeset/*.md` for releasable changes.
-- Merging to `main` triggers `release.yml`.
-- Changesets action opens/updates a release PR.
-- Merging the release PR applies version/changelog changes.
-- Publish is guarded by repository variable `NPM_PUBLISH_ENABLED=true`.
+## 5) Architecture notes
 
-Relevant scripts:
+### Build (`tsdown`)
 
-- `bun run changeset`
-- `bun run release:status`
-- `bun run version-packages`
-- `bun run release`
-- `bun run release:ci` (guarded CI publish path)
+- Entry: `src/index.ts` → `dist/index.mjs` + `dist/index.d.mts`
+- `platform: "node"`, `format: "esm"`, `fixedExtension: true`
+- `nodeProtocol: true`, `deps.skipNodeModulesBundle: true`
+- `exports: false` (package.json stays hand-authored)
+- Post-build checks: `publint` (error), `attw` (`esm-only`, error), `unused` (error)
+- Size report: gzip + brotli
 
-## 6) CI Overview
+### Types
 
-### `ci.yml`
+- `tsc` is typecheck-only (`noEmit: true`)
+- Declarations come from tsdown (`dts: true`)
 
-- `quality` job on Node 20: full `check:all`
-- `compat` matrix on Node 20/22/24: test + build + package checks
-- `changeset-required` PR guard:
-  - package-impacting paths require a `.changeset/*.md`
+### Tests
 
-### `release.yml`
+- Vitest, `environment: "node"`, files under `tests/**/*.{test,spec}.ts`
+- Explicit imports from `vitest` (no globals)
 
-- Trigger: push to `main` + manual dispatch
-- Runs quality gate before release action
-- Uses npm trusted publishing (OIDC) with provenance
-- Publish only when `NPM_PUBLISH_ENABLED=true`
+### Lint / format
 
-### `security-audit.yml`
+- Ultracite presets via `oxlint.config.ts` and `oxfmt.config.ts`
+- Editor: Oxc extension + `.vscode/settings.json` (format + fixAll on save, including unused imports)
 
-- Weekly production audit
-- Adds `bun outdated` summary
+## 6) CI
 
-## 7) Change Rules for Agents
+`.github/workflows/ci.yml` only:
 
-1. Keep `dist/` generated; do not hand-edit output files.
-2. If package behavior/API changes, add/update tests and changeset docs as needed.
-3. Keep docs aligned with behavior changes (`README.md`, `GETTING_STARTED.md`,
-   `CONTRIBUTING.md`, `MAINTAINERS.md`).
-4. Favor Bun-native APIs for scripts where practical.
-5. Preserve ESM-only package contract unless user asks otherwise.
-6. Do not introduce secrets or token-based publishing patterns.
+- **Quality**: Bun `1.3.14` + Node 22 → `bun run check:all`
+- **Compat**: Node 22/24 → `test` + `build`
+- Triggers: push/PR to `main`
+- No publish, no tokens, no release workflow
 
-## 8) Typical Paths You Will Edit
+## 7) Change rules
 
-- `src/*.ts` - implementation
-- `tests/*.test.ts` - runtime tests
-- `scripts/*.ts` - maintenance/consumer smoke scripts
-- `.github/workflows/*.yml` - CI/CD behavior
-- Docs at repository root
+1. Do not hand-edit `dist/`.
+2. Keep `README.md` and this file aligned with real behavior.
+3. Prefer Bun-native scripts where practical.
+4. Preserve the ESM-only contract unless the user asks otherwise.
+5. Do not reintroduce Changesets, Husky, commitlint, consumer smoke tests, or CI publishing.
+6. Do not commit secrets or put npm tokens in the repo.
 
-## 9) Documentation Map
+## 8) Typical edit paths
 
-- `README.md` - high-level usage + commands
-- `GETTING_STARTED.md` - beginner full flow
-- `CONTRIBUTING.md` - contributor expectations
-- `MAINTAINERS.md` - owner operations and incident handling
-- `SECURITY.md` - vuln reporting policy
+- `src/*.ts` — implementation
+- `tests/*.test.ts` — tests
+- `*.config.ts` — tooling
+- `.github/workflows/*.yml` — CI quality only
+- `package.json` — version bumps for release
 
-## 10) Common Pitfalls
+## 9) Pitfalls
 
-- Forgetting a changeset for package-impacting PRs
-- Expecting publish to run while `NPM_PUBLISH_ENABLED` is false/unset
-- Breaking the ESM-only contract by adding CJS assumptions
-- Updating scripts/workflows without updating docs
+- Publishing without `bun run login` / active npm session
+- Forgetting to bump `package.json` `version` before `release`
+- Expecting CI to publish
+- Enabling tsdown auto-`exports` and losing `require: null`
+- Assuming Node 20 can run the **build** toolchain (consumers: yes; tsdown CLI: no)
+- TypeScript 7 may warn as experimental during dts emit — expected with current tsdown
